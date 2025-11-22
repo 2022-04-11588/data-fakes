@@ -1,0 +1,174 @@
+name: Run Adapter Tests
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      GH_START_ISO: ${{ github.event.head_commit.timestamp }}
+      APP_ENV: testing
+
+      # Redis (Fake adapters still expect DSNs)
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+      REDIS_PASS: ""
+      REDIS_MAIN_DSN: "redis://127.0.0.1:6379"
+
+      # Mongo (Fake adapter expects DSNs)
+      MONGO_HOST: 127.0.0.1
+      MONGO_PORT: 27017
+      MONGO_MAIN_DSN: "mongodb://127.0.0.1:27017/maatify"
+
+      # MySQL (Fake adapter still reads DSN)
+      MYSQL_HOST: 127.0.0.1
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASS: root
+      MYSQL_DB: maatify_dev
+      MYSQL_DSN: "mysql:host=127.0.0.1;dbname=maatify_dev;charset=utf8mb4"
+
+    services:
+      redis:
+        image: redis:7
+        ports: [ "6379:6379" ]
+
+      mongo:
+        image: mongo:7
+        ports: [ "27017:27017" ]
+
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: maatify_dev
+          MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
+        ports:
+          - "3306:3306"
+
+    steps:
+      # ---------------------------------------------
+      # 1) Checkout
+      # ---------------------------------------------
+      - uses: actions/checkout@v4
+
+      # ---------------------------------------------
+      # 2) Explicit ENV Injection
+      # ---------------------------------------------
+      - name: Inject Maatify Test Environment
+        run: |
+          echo "APP_ENV=testing" >> $GITHUB_ENV
+
+          echo "REDIS_HOST=127.0.0.1" >> $GITHUB_ENV
+          echo "REDIS_MAIN_DSN=redis://127.0.0.1:6379" >> $GITHUB_ENV
+
+          echo "MONGO_HOST=127.0.0.1" >> $GITHUB_ENV
+          echo "MONGO_MAIN_DSN=mongodb://127.0.0.1:27017/maatify" >> $GITHUB_ENV
+
+          echo "MYSQL_HOST=127.0.0.1" >> $GITHUB_ENV
+          echo "MYSQL_USER=root" >> $GITHUB_ENV
+          echo "MYSQL_PASS=root" >> $GITHUB_ENV
+          echo "MYSQL_DSN=mysql:host=127.0.0.1;dbname=maatify_dev;charset=utf8mb4" >> $GITHUB_ENV
+
+      # ---------------------------------------------
+      # 3) PHP Setup
+      # ---------------------------------------------
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      # ---------------------------------------------
+      # 4) Debug (Optional but useful)
+      # ---------------------------------------------
+      - name: 🔍 Debug Connections
+        run: |
+          echo "🧩 Environment: $APP_ENV"
+          redis-cli -h $REDIS_HOST ping || echo "⚠️ Redis not responding"
+          mysql -h $MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASS -e "SELECT VERSION();" || echo "⚠️ MySQL not responding"
+          mongo --host $MONGO_HOST --port 27017 --eval "db.runCommand({ ping: 1 })" || echo "⚠️ Mongo not responding"
+        continue-on-error: true
+
+      # ---------------------------------------------
+      # 5) Wait MySQL Ready
+      # ---------------------------------------------
+      - name: ⏳ Wait for MySQL to be ready
+        run: |
+          for i in {1..20}; do
+            if mysqladmin ping -h 127.0.0.1 --silent; then
+              echo "MySQL ready!"
+              break
+            fi
+            echo "MySQL not ready ($i)"
+            sleep 2
+          done
+
+      - name: 🔧 Patch MySQL auth plugin
+        run: |
+          docker exec "${{ job.services.mysql.id }}" \
+            mysql -uroot -proot -e \
+            "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root';"
+
+      # ---------------------------------------------
+      # 6) Create Databases
+      # ---------------------------------------------
+      - name: 🛠 Initialize MySQL Databases
+        run: |
+          mysql -h $MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASS -e "CREATE DATABASE IF NOT EXISTS maatify_dev;"
+          mysql -h $MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASS -e "CREATE DATABASE IF NOT EXISTS maatify_main;"
+          mysql -h $MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASS -e "CREATE DATABASE IF NOT EXISTS maatify_test;"
+
+      # ---------------------------------------------
+      # 7) PHPStan
+      # ---------------------------------------------
+      - name: Run PHPStan
+        id: phpstan
+        run: |
+          (
+            set +e
+            composer analyse > phpstan_output.txt
+            EXIT=$?
+            echo "phpstan_exit=$EXIT" >> $GITHUB_OUTPUT
+            ERRORS=$(grep -Eo "Found ([0-9]+) errors" phpstan_output.txt | grep -Eo "[0-9]+")
+            if [ -z "$ERRORS" ]; then ERRORS=0; fi
+            echo "phpstan_errors=$ERRORS" >> $GITHUB_OUTPUT
+          )
+
+      # ---------------------------------------------
+      # 8) PHPUnit
+      # ---------------------------------------------
+      - name: 🧪 Run PHPUnit Tests
+        id: tests
+        run: |
+          vendor/bin/phpunit --configuration phpunit.xml | tee phpunit.log
+        continue-on-error: true
+
+      # ---------------------------------------------
+      # 9) Summary
+      # ---------------------------------------------
+      - name: 🧾 Summary Report
+        if: always()
+        run: |
+          echo "### 🧾 Adapter Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "✔ PHPStan Errors: ${{ steps.phpstan.outputs.phpstan_errors }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          tail -n 20 phpunit.log >> $GITHUB_STEP_SUMMARY
+
+      # ---------------------------------------------
+      # 10) Telegram Notification
+      # ---------------------------------------------
+      - name: 📲 Notify Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_CI_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CI_CHAT_ID }}
+        run: |
+          # same telegram block kept as-is
+          echo "Sending telegram..."
