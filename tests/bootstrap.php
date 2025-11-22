@@ -13,4 +13,24 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/../vendor/autoload.php';
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+if (is_file($autoloadPath)) {
+    require $autoloadPath;
+    return;
+}
+
+spl_autoload_register(static function (string $class): void {
+    $prefixes = [
+        'Maatify\\DataFakes\\' => __DIR__ . '/../src/',
+    ];
+
+    foreach ($prefixes as $prefix => $baseDir) {
+        if (str_starts_with($class, $prefix)) {
+            $relative = substr($class, strlen($prefix));
+            $path = $baseDir . str_replace('\\', '/', $relative) . '.php';
+            if (is_file($path)) {
+                require $path;
+            }
+        }
+    }
+});

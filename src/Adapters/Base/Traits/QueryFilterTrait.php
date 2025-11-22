@@ -21,9 +21,9 @@ namespace Maatify\DataFakes\Adapters\Base\Traits;
 trait QueryFilterTrait
 {
     /**
-     * @param array<int, array<string, mixed>> $rows
-     * @param array<string, mixed>             $filters
-     * @return array<int, array<string, mixed>>
+     * @param array<int|string, array<string, mixed>> $rows
+     * @param array<string, mixed>                    $filters
+     * @return array<int|string, array<string, mixed>>
      */
     protected function applyFilters(array $rows, array $filters): array
     {
@@ -80,7 +80,7 @@ trait QueryFilterTrait
     }
 
     /**
-     * @param array<int, array<string, mixed>> $rows
+     * @param array<int|string, array<string, mixed>> $rows
      * @return array<int, array<string, mixed>>
      */
     protected function applyOrdering(array $rows, string $column, string $order): array

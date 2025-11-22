@@ -26,7 +26,7 @@ namespace Maatify\DataFakes\Storage;
  */
 class FakeStorageLayer
 {
-    /** @var array<string, array<int, array<string, mixed>>> */
+    /** @var array<string, array<int|string, array<string, mixed>>> */
     private array $tables = [];
 
     /** @var array<string, int> */
@@ -36,11 +36,25 @@ class FakeStorageLayer
      * Read all rows of a table.
      *
      * @param string $table
-     * @return array<int, array<string, mixed>>
+     * @return array<int|string, array<string, mixed>>
      */
     public function read(string $table): array
     {
         return $this->tables[$table] ?? [];
+    }
+
+    /**
+     * Read a row by its identifier.
+     *
+     * @param string     $table
+     * @param int|string $id
+     * @return array<string, mixed>|null
+     */
+    public function readById(string $table, int|string $id): ?array
+    {
+        $normalizedId = $this->normalizeKey($id);
+
+        return $this->tables[$table][$normalizedId] ?? null;
     }
 
     /**
@@ -76,23 +90,93 @@ class FakeStorageLayer
     }
 
     /**
+     * Update a row by its identifier.
+     *
+     * @param string               $table
+     * @param int|string           $id
+     * @param array<string, mixed> $updates
+     * @return array<string, mixed>|null
+     */
+    public function updateById(string $table, int|string $id, array $updates): ?array
+    {
+        $row = $this->readById($table, $id);
+        if ($row === null) {
+            return null;
+        }
+
+        unset($updates['id']);
+        $updated = array_merge($row, $updates);
+        $this->tables[$table][$this->normalizeKey($id)] = $updated;
+
+        return $updated;
+    }
+
+    /**
      * Replace an entire table.
      *
-     * @param string                           $table
-     * @param array<int, array<string, mixed>> $rows
+     * @param string                                    $table
+     * @param array<int|string, array<string, mixed>>   $rows
      */
     public function writeTable(string $table, array $rows): void
     {
-        $this->tables[$table] = $rows;
+        $normalizedRows = [];
+        foreach ($rows as $row) {
+            // Prefer an explicit numeric id, otherwise fall back to Mongo-style _id
+            $id = $row['id'] ?? ($row['_id'] ?? null);
+            if ($id === null) {
+                continue;
+            }
 
-        // Recalculate auto-increment
+            if (!is_int($id) && !is_string($id) && !is_float($id)) {
+                continue;
+            }
+
+            $key = is_numeric($id) ? (int) $id : (string) $id;
+            $normalizedRows[$key] = $row;
+        }
+
+        $this->tables[$table] = $normalizedRows;
+
+        // Recalculate auto-increment using numeric keys only
         $max = 0;
-        foreach ($rows as $id => $_row) {
-            $intId = (int) $id;
-            $max = max($max, $intId);
+        foreach ($normalizedRows as $id => $_row) {
+            if (is_int($id) || (is_string($id) && ctype_digit($id))) {
+                $intId = (int) $id;
+                $max    = max($max, $intId);
+            }
         }
 
         $this->autoIds[$table] = $max + 1;
+    }
+
+    /**
+     * Delete a row by its identifier.
+     *
+     * @param string     $table
+     * @param int|string $id
+     * @return bool
+     */
+    public function deleteById(string $table, int|string $id): bool
+    {
+        $normalizedId = $this->normalizeKey($id);
+        if (!isset($this->tables[$table][$normalizedId])) {
+            return false;
+        }
+
+        unset($this->tables[$table][$normalizedId]);
+
+        return true;
+    }
+
+    /**
+     * List all rows for a table.
+     *
+     * @param string $table
+     * @return array<int, array<string, mixed>>
+     */
+    public function listAll(string $table): array
+    {
+        return array_values($this->read($table));
     }
 
     /**
@@ -115,10 +199,15 @@ class FakeStorageLayer
     /**
      * Return raw state (for debugging/testing).
      *
-     * @return array<string, array<int, array<string, mixed>>>
+     * @return array<string, array<int|string, array<string, mixed>>>
      */
     public function export(): array
     {
         return $this->tables;
+    }
+
+    private function normalizeKey(int|string $id): int|string
+    {
+        return is_numeric($id) ? (int) $id : (string) $id;
     }
 }

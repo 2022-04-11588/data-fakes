@@ -76,7 +76,7 @@ class FakeMongoAdapter implements AdapterInterface
         }
 
         /** @var array<int,array<string,mixed>> $rows */
-        $rows = $this->storage->read($collection);
+        $rows = array_values($this->storage->read($collection));
         $rows[] = $document;
 
         $this->storage->writeTable($collection, $rows);
@@ -117,7 +117,7 @@ class FakeMongoAdapter implements AdapterInterface
     public function find(string $collection, array $filters): array
     {
         /** @var array<int,array<string,mixed>> $rows */
-        $rows = $this->storage->read($collection);
+        $rows = array_values($this->storage->read($collection));
 
         $results = [];
 
@@ -137,7 +137,7 @@ class FakeMongoAdapter implements AdapterInterface
     public function updateOne(string $collection, array $filters, array $updates): int
     {
         /** @var array<int,array<string,mixed>> $rows */
-        $rows = $this->storage->read($collection);
+        $rows = array_values($this->storage->read($collection));
         $updated = 0;
 
         foreach ($rows as $i => $row) {
@@ -162,7 +162,7 @@ class FakeMongoAdapter implements AdapterInterface
     public function deleteOne(string $collection, array $filters): int
     {
         /** @var array<int,array<string,mixed>> $rows */
-        $rows = $this->storage->read($collection);
+        $rows = array_values($this->storage->read($collection));
         $deleted = 0;
 
         foreach ($rows as $i => $row) {
