@@ -31,7 +31,8 @@ class FakeUnitOfWork
 
     private readonly SnapshotManager $snapshotsManager;
 
-    public function __construct(FakeStorageLayer $storage, ?SnapshotManager $snapshotsManager = null)    {
+    public function __construct(FakeStorageLayer $storage, ?SnapshotManager $snapshotsManager = null)
+    {
         $this->snapshotsManager = $snapshotsManager ?? new SnapshotManager($storage);
     }
 

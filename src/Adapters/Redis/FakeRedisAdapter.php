@@ -72,6 +72,12 @@ class FakeRedisAdapter implements AdapterInterface
         return $this;
     }
 
+    public function reset(): void
+    {
+        $this->store = [];
+        $this->ttl   = [];
+    }
+
     /**
      * @return mixed
      */

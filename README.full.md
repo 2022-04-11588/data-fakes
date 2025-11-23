@@ -7,22 +7,44 @@
 
 ---
 
+## 📌 TL;DR — Summary
+
+`maatify/data-fakes` is the official **fully deterministic in-memory testing engine**
+for the Maatify ecosystem. It simulates MySQL, DBAL, Redis, and MongoDB adapters
+with zero external services required.
+
+### ✨ Instant Highlights
+- Fake MySQL Adapter (filters, sort, limit, transactions via snapshots)
+- Fake DBAL Adapter (Doctrine-like API)
+- Fake Mongo Adapter with query operators
+- Fake Redis Adapter (strings, lists, hashes, counters, TTL)
+- Shared deterministic memory engine
+- FakeRepository & FakeCollection layer
+- **Snapshot Engine + Unit of Work (Phase 6)**
+- **Fixtures Loader + FakeEnvironment (Phase 7)**
+- Test isolation with auto-reset
+- 100% compatible with real adapters in `maatify/data-adapters`
+
+> Built for PHPUnit, CI pipelines, fast tests, and full repository simulation.
+
 ## 🚀 Overview
 
-`maatify/data-fakes` is a deterministic, lightweight **in-memory data simulation engine** fully compatible with all official Maatify Data Adapters.
+`maatify/data-fakes` is a lightweight and deterministic **in-memory simulation layer**
+designed for testing repositories, services, and adapters across the Maatify ecosystem.
+It recreates the behavior of MySQL, DBAL, Redis, and MongoDB drivers — using the same
+contracts as real adapters — while keeping everything inside memory.
 
-It allows any repository or service to run and be tested **without real databases**, providing:
+This enables:
+- Testing without databases
+- Running CI without Docker
+- Fast and isolated PHPUnit tests
+- Simulating multi-adapter workflows
+- Snapshot-based rollback
+- Complex test data scenarios via fixtures
 
-- Fake MySQL Adapter
-- Fake MySQL DBAL Adapter
-- Fake Redis Adapter
-- Fake MongoDB Adapter
-- Fake Repository Layer
-- **Fake Unit of Work & Snapshot Engine (Phase 6)**
-- Fully deterministic test isolation
-- No external services required — perfect for CI
+All adapters behave identically to real adapters, ensuring seamless transition between
+fake and production environments.
 
-All Fake Adapters follow the **exact same contracts** used by real adapters across the Maatify ecosystem.
 
 ---
 
@@ -40,30 +62,36 @@ This ensures **1:1 compatibility** between fake drivers and their real counterpa
 
 ---
 
-## 🧩 Features
+## 🧩 Key Features
 
-### 🔌 Fake Adapter Capabilities
-- Full in-memory storage engine
-- Auto-increment ID emulation
-- SQL-like filtering, ordering, limit/offset
-- Mongo-like operators (`$in`, `$gt`, `$lte`, `$ne`)
-- Redis-like primitives (strings, lists, hashes, counters, TTL)
+### 🔌 Fake Adapters
+- **FakeMySQLAdapter** — Select, Insert, Update, Delete, filters, ordering, limit/offset
+- **FakeMySQLDbalAdapter** — Doctrine-style wrapper
+- **FakeMongoAdapter** — Collections with operators (`$in`, `$gt`, `$ne`, `$lte`)
+- **FakeRedisAdapter** — Strings, lists, hashes, counters, TTL
 
-### 🧱 Repository Layer
-- `FakeRepository`
-- `FakeCollection`
-- `ArrayHydrator`
+### 🧱 Repository Support
+- FakeRepository  
+- FakeCollection  
+- ArrayHydrator  
 
-### 🔄 Unit of Work & Snapshots (Phase 6)
-- Full transactional grouping
-- Nested transactions
-- Instant rollback
-- Deterministic and isolated state
-- Storage-level snapshots for all adapters
+### 🔄 Transactions & Snapshots (Phase 6)
+- Unit-of-Work transaction control
+- Nested snapshots
+- Rollback support
+- Deterministic state restoration
+
+### 📦 Fixtures & Testing (Phase 7)
+- JSON fixtures loader
+- Array-based dataset loader
+- FakeEnvironment with auto-reset
+- SQL + Mongo + Redis fixture hydration
+- Ideal for integration testing
 
 ### ⚙ Adapter Lifecycle
-- `connect()`, `disconnect()`
-- `healthCheck()`, `isConnected()`
+All fake adapters implement:
+- `connect()` / `disconnect()`
+- `healthCheck()` / `isConnected()`
 - `getDriver()`
 
 ---
@@ -81,60 +109,71 @@ composer require maatify/data-fakes --dev
 
 ## 🧪 Basic Usage
 
-### Using FakeResolver
+### Resolve a fake adapter:
 
 ```php
-use Maatify\DataFakes\Resolvers\FakeResolver;
-
 $resolver = new FakeResolver();
 $db = $resolver->resolve('mysql:main', true);
-
 $rows = $db->select('users', ['id' => 1]);
 ```
 
-### Reset storage between tests
+### Reset state:
 
 ```php
 FakeStorageLayer::reset();
+```
+
+### Load fixtures:
+
+```php
+$env->loadFixturesFromFile(__DIR__.'/fixtures.json');
 ```
 
 ---
 
 ## 📁 Included Components
 
-### 🔹 Fake Adapters
-- FakeMySQLAdapter
-- FakeMySQLDbalAdapter
-- FakeRedisAdapter
-- FakeMongoAdapter
+### 🔹 Adapters
+- FakeMySQLAdapter  
+- FakeMySQLDbalAdapter  
+- FakeRedisAdapter  
+- FakeMongoAdapter  
 
 ### 🔹 Repository Layer
-- FakeRepository
-- FakeCollection
-- ArrayHydrator
+- FakeRepository  
+- FakeCollection  
+- ArrayHydrator  
 
 ### 🔹 Routing
-- FakeResolver
+- FakeResolver  
 
-### 🔹 **Unit of Work (Phase 6)**
-- `FakeUnitOfWork`
-- `SnapshotManager`
-- `SnapshotState`
+### 🔹 Snapshot System (Phase 6)
+- SnapshotManager  
+- SnapshotState  
+- FakeUnitOfWork  
+
+### 🔹 Fixtures & Testing (Phase 7)
+- FakeFixturesLoader  
+- JsonFixtureParser  
+- FakeEnvironment  
+- ResetState  
 
 ---
 
 ## 🧩 Architectural Highlights
 
+
 ### FakeStorageLayer
 - Central deterministic memory engine
 - Shared across all fake adapters
 - Supports snapshot export/import
-- Auto ID management
+- Auto ID management (incremental + manual)
 
 ### Snapshot System (Phase 6)
 - Immutable snapshot objects
 - Storage-wide state capture
 - Full restore support
+- Transaction simulation using snapshots
 
 ### Unit of Work (Phase 6)
 - Stacked snapshots
@@ -142,16 +181,30 @@ FakeStorageLayer::reset();
 - Transactional helper wrapper
 - Adapter-agnostic
 
+## 📦 Fixtures & Test Environment (Phase 7)
+
+### FakeFixturesLoader
+- Loads SQL, Mongo, and Redis fixtures  
+- From arrays or JSON files  
+
+### FakeEnvironment
+- Coordinates all fake adapters  
+- Provides auto-reset between tests  
+
+### ResetState
+- Toggles auto-reset behavior  
+
 ---
 
 ## 📚 Development Phases
 
-- **Phase 1:** Project Bootstrap & Core Architecture
-- **Phase 2:** Fake MySQL + DBAL Adapter
-- **Phase 3:** Fake Redis Adapter
-- **Phase 4:** Fake Mongo Adapter
-- **Phase 5:** Repository Layer
-- **Phase 6:** **Unit of Work + Snapshot Engine** 🆕
+- **Phase 1:** Project Bootstrap & Core Architecture  
+- **Phase 2:** Fake MySQL & DBAL Adapter  
+- **Phase 3:** Fake Redis Adapter  
+- **Phase 4:** Fake Mongo Adapter  
+- **Phase 5:** Repository Layer  
+- **Phase 6:** Snapshot Engine + Unit of Work  
+- **Phase 7:** Fixtures Loader + FakeEnvironment  
 
 ---
 
@@ -160,7 +213,7 @@ FakeStorageLayer::reset();
 Full implementation details:
 
 - Architecture overview
-- Development phases (1 → 6)
+- Development phases (1 → 7)
 - API map
 - Class reference
 - Test behavior and isolation rules

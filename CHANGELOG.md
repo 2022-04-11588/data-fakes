@@ -4,6 +4,54 @@ All notable changes to **maatify/data-fakes** will be documented in this file.
 The format is based on **Keep a Changelog**, and this project adheres to **Semantic Versioning**.
 
 ---
+## [1.0.3] — 2025-11-22
+
+### 🚀 Added — Phase 7: Fixtures Loader & FakeEnvironment
+
+This release adds a complete fixtures and test-environment system on top of the
+existing in-memory adapters, enabling deterministic test data loading and full
+environment resets.
+
+#### 📦 Fixtures Loader
+
+* Added `FakeFixturesLoader`
+    * Supports loading fixtures from JSON files or arrays
+    * Hydrates SQL tables, Mongo collections, and Redis keys
+    * Deterministic load order (SQL → Mongo → Redis)
+
+* Added `JsonFixtureParser`
+    * Strict JSON parsing with validation
+    * Helpful exception messages for malformed files
+
+#### 🧪 Fake Test Environment
+
+* Added `FakeEnvironment`
+    * Coordinates FakeMySQL, FakeDBAL, FakeMongo, and FakeRedis in one environment
+    * Optional auto-reset before each test
+    * Fixture loading helpers
+
+* Added `ResetState`
+    * Enables/disables auto-reset mode
+    * Ensures reproducible test state
+
+#### 🗄 Adapter Enhancements
+
+* FakeRedisAdapter updated with reset hooks for fixture hydration
+* FakeMongoAdapter aligned with environment-level resets
+
+#### 🧪 Tests
+
+* Added `FakeFixturesLoaderTest`
+* Added `FakeEnvironmentTest`
+* Added sample fixture file: `tests/Fixtures/sample-fixtures.json`
+
+#### 📝 Documentation
+
+* Added `README.phase7.md`
+* Updated `README.full.md` with Phase 7 details
+* Updated component list and basic usage examples
+
+---
 
 ## [1.0.2] — 2025-11-22
 
