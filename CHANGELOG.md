@@ -209,7 +209,7 @@ You’re free to use, modify, and distribute this library with attribution.
 ---
 ## 👤 Author
 **© 2025 Maatify.dev**  
-Engineered by **Mohamed Abdulalim ([@megyptm](https://github.com/megyptm))** — https://www.maatify.dev
+Engineered by **Mohamed Abdulalim ([@megyptm](https://github.com/megyptm))** - https://www.maatify.dev
 
 📘 Full documentation & source code:  
 https://github.com/Maatify/data-fakes
