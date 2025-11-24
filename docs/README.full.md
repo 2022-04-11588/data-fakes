@@ -190,7 +190,7 @@ $rows = $mysql->select('users', ['name' => 'Ada Lovelace']);
 ### Reset state
 
 ```php
-FakeStorageLayer::reset();
+$storage->reset();
 ```
 
 ---

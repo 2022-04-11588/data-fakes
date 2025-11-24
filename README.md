@@ -157,7 +157,7 @@ $rows = $mysql->select('users', ['name' => 'Ada Lovelace']);
 ### Reset Between Tests
 
 ```php
-FakeStorageLayer::reset();
+$storage->reset();
 ```
 ---
 
